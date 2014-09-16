@@ -30,7 +30,7 @@ def home():
 
 
 @app.route('/participants')
-@connectDB
+# @connectDB
 def participants():
     return render_template('participants.html')
 
@@ -46,6 +46,6 @@ def register():
 
 
 @app.route('/complete', methods=['POST'])
-@connectDB
+# @connectDB
 def complete():
     return redirect('/')
