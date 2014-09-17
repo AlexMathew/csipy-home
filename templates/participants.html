@@ -1,4 +1,7 @@
 {% extends "template.html" %}
 {% block content %}
-	{{cursor}}
+	{% for part in participants %}
+		| {{ part }} |
+	{% endfor %}
+
 {% endblock %}

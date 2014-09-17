@@ -33,7 +33,10 @@ def home():
 @app.route('/participants')
 @connectDB
 def participants(*args):
-    return render_template('participants.html', cursor = cur)
+    cur = args[0]
+    cur.execute('SELECT NAME FROM PARTICIPANTS')
+    parts = cur.fetchall()
+    return render_template('participants.html', participants = parts)
 
 
 @app.route('/setup')
