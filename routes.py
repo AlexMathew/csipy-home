@@ -33,7 +33,7 @@ def home():
 @app.route('/participants')
 @connectDB
 def participants(*args):
-    return args[0]
+    return render_template('participants.html', cursor = cur)
 
 
 @app.route('/setup')
