@@ -61,12 +61,12 @@ def complete(*args):
     complete = cur.fetchall()
     cur.execute('SELECT REG FROM PARTICIPANTS WHERE REGISTERED IS true')
     registered = cur.fetchall()
-    if regno not in complete:
+    if (regno,) not in complete:
         return render_template('failure.html', error_msg="We're sorry, but the workshop is currently \
                                 open only to members registed to CSI. Try getting links to the resources \
                                 from your friends who are attending the workshop. We'll keep you \
                                 posted if we plan an open Python workshop. Thanks for your interest !")
-    elif regno in registered:
+    elif (regno,) in registered:
         return render_template('failure.html', error_msg="You're already registered.")
     else:
         cur.execute('UPDATE PARTICIPANTS SET REGISTERED=false WHERE REG=(%s)', (regno,))
