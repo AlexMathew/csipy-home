@@ -1,27 +1,28 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, request
 import psycopg2
+from functools import wraps
 import os
 import urlparse
+
 
 app = Flask(__name__)
 
 
-# def connectDB(wrapped):
-#     def inner(*args, **kwargs):
-#         api_token = os.environ["API_TOKEN"]
-#         urlparse.uses_netloc.append("postgres")
-#         url = urlparse.urlparse(os.environ["DATABASE_URL"])
-#         conn = psycopg2.connect(
-#             database=url.path[1:],
-#             user=url.username,
-#             password=url.password,
-#             host=url.hostname,
-#             port=url.port
-#         )
-#         cur = conn.cursor()
-#         ret = wrapped(*args, **kwargs)
-#         return ret
-#     return inner
+def connectDB(wrapped):
+    @wraps(wrapped)
+    def inner(*args, **kwargs):
+        urlparse.uses_netloc.append("postgres")
+        url = urlparse.urlparse(os.environ["DATABASE_URL"])
+        conn = psycopg2.connect(
+            database=url.path[1:],
+            user=url.username,
+            password=url.password,
+            host=url.hostname,
+            port=url.port
+        )
+        cur = conn.cursor()
+        return wrapped(cur, *args, **kwargs)
+    return inner
 
 
 @app.route('/')
@@ -30,9 +31,9 @@ def home():
 
 
 @app.route('/participants')
-# @connectDB
-def participants():
-    return render_template('participants.html')
+@connectDB
+def participants(*args):
+    return args[0]
 
 
 @app.route('/setup')
@@ -46,6 +47,6 @@ def register():
 
 
 @app.route('/complete', methods=['POST'])
-# @connectDB
-def complete():
-    return redirect('/')
+@connectDB
+def complete(*args):
+    return render_template('/success.html')
