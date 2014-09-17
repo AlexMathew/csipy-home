@@ -21,7 +21,6 @@ def connectDB(wrapped):
             port=url.port
         )
         cur = conn.cursor()
-        cur = None
         return wrapped(cur, *args, **kwargs)
     return inner
 
@@ -56,7 +55,6 @@ def complete(*args):
     cur = args[0]
     try:
         regno = int(request.form['regno'])
-        print regno
     except Exception:
         return render_template('failure.html', error_msg="Please enter a valid register number.")
     cur.execute('SELECT REG FROM PARTICIPANTS')
