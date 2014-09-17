@@ -21,7 +21,11 @@ def connectDB(wrapped):
             port=url.port
         )
         cur = conn.cursor()
-        return wrapped(cur, *args, **kwargs)
+        ret = wrapped(cur, *args, **kwargs)
+        conn.commit()
+        cur.close()
+        conn.close()
+        return ret
     return inner
 
 
