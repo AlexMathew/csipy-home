@@ -3,6 +3,7 @@ import psycopg2
 from functools import wraps
 import os
 import urlparse
+import requests
 
 
 app = Flask(__name__)
