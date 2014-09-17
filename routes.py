@@ -30,15 +30,23 @@ def connectDB(wrapped):
     return inner
 
 
-def mailgun_send(email):
+def mailgun_operations(name, email):
     key = os.environ["MAILGUN_KEY"]
     r = requests.post(
-                 "https://api.mailgun.net/v2/sandboxaafd9ee615e54f49af424db82ccf028a.mailgun.org/messages",
-                 auth=("api", key),
-                 data={"from": "Alex Mathew <alexmathew003@gmail.com>",
-                       "to": email,
-                       "subject": "Welcome to CSIPy!",
-                       "text": os.environ["WELCOME_MAIL"]})
+                     "https://api.mailgun.net/v2/sandboxaafd9ee615e54f49af424db82ccf028a.mailgun.org/messages",
+                     auth=("api", key),
+                     data={"from": "Alex Mathew <alexmathew003@gmail.com>",
+                           "to": email,
+                           "subject": "Welcome to CSIPy!",
+                           "text": os.environ["WELCOME_MAIL"]})
+    r = requests.post(
+                     "https://api.mailgun.net/v2/lists/csipy@sandboxaafd9ee615e54f49af424db82ccf028a.mailgun.org/members",
+                     auth=('api', key),
+                     data={'subscribed': True,
+                           'address': email,
+                           'name': name,
+                           'description': '',
+                           'vars': '{"name": "' + name + '"}'})
     return
 
 
@@ -87,7 +95,7 @@ def complete(*args):
         return render_template('failure.html', error_msg="You're already registered.")
     else:
         cur.execute('UPDATE PARTICIPANTS SET REGISTERED=true WHERE REG=%s', (regno,))
-        cur.execute('SELECT EMAIL FROM PARTICIPANTS WHERE REG=%s', (regno,))
-        email = cur.fetchall()[0]
-        mailgun_send(email)
+        cur.execute('SELECT NAME, EMAIL FROM PARTICIPANTS WHERE REG=%s', (regno,))
+        name, email = cur.fetchone()
+        mailgun_operations(name, email)
         return render_template('success.html')
