@@ -69,5 +69,5 @@ def complete(*args):
     elif (regno,) in registered:
         return render_template('failure.html', error_msg="You're already registered.")
     else:
-        cur.execute('UPDATE PARTICIPANTS SET REGISTERED=true WHERE REG=(%s)', (regno,))
+        cur.execute('UPDATE PARTICIPANTS SET REGISTERED=true WHERE REG=%s', (regno,))
         return render_template('success.html')
