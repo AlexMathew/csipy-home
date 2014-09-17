@@ -53,17 +53,17 @@ def register():
 @app.route('/complete', methods=['POST'])
 @connectDB
 def complete(*args):
-   cur = args[0]
+    cur = args[0]
     try:
         regno = int(request.form['regno'])
         print regno
     except Exception:
         return render_template('failure.html', error_msg="Please enter a valid register number.")
-   cur.execute('SELECT REG FROM PARTICIPANTS')
-   complete = cur.fetchall()
-   cur.execute('SELECT REG FROM PARTICIPANTS WHERE REGISTERED IS true')
-   registered = cur.fetchall()
-   if regno not in complete:
+    cur.execute('SELECT REG FROM PARTICIPANTS')
+    complete = cur.fetchall()
+    cur.execute('SELECT REG FROM PARTICIPANTS WHERE REGISTERED IS true')
+    registered = cur.fetchall()
+    if regno not in complete:
         return render_template('failure.html', error_msg="We're sorry, but the workshop is currently \
                                 open only to members registed to CSI. Try getting links to the resources \
                                 from your friends who are attending the workshop. We'll keep you \
