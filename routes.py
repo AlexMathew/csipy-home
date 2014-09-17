@@ -21,6 +21,7 @@ def connectDB(wrapped):
             port=url.port
         )
         cur = conn.cursor()
+        cur = None
         return wrapped(cur, *args, **kwargs)
     return inner
 
@@ -34,7 +35,7 @@ def home():
 @connectDB
 def participants(*args):
     cur = args[0]
-    cur.execute('SELECT REG, NAME FROM PARTICIPANTS WHERE REGISTERED IS true')
+    cur.execute('SELECT REG, NAME FROM PARTICIPANTS WHERE REGISTERED IS true ORDER BY REG')
     parts = cur.fetchall()
     return render_template('participants.html', participants = parts)
 
@@ -52,4 +53,23 @@ def register():
 @app.route('/complete', methods=['POST'])
 @connectDB
 def complete(*args):
-    return render_template('/success.html')
+   cur = args[0]
+    try:
+        regno = int(request.form['regno'])
+        print regno
+    except Exception:
+        return render_template('failure.html', error_msg="Please enter a valid register number.")
+   cur.execute('SELECT REG FROM PARTICIPANTS')
+   complete = cur.fetchall()
+   cur.execute('SELECT REG FROM PARTICIPANTS WHERE REGISTERED IS true')
+   registered = cur.fetchall()
+   if regno not in complete:
+        return render_template('failure.html', error_msg="We're sorry, but the workshop is currently \
+                                open only to members registed to CSI. Try getting links to the resources \
+                                from your friends who are attending the workshop. We'll keep you \
+                                posted if we plan an open Python workshop. Thanks for your interest !")
+    elif regno in registered:
+        return render_template('failure.html', error_msg="You're already registered.")
+    else:
+        cur.execute('UPDATE PARTICIPANTS SET REGISTERED=false WHERE REG=(%s)', (regno,))
+        return render_template('success.html')
