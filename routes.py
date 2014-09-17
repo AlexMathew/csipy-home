@@ -29,6 +29,18 @@ def connectDB(wrapped):
     return inner
 
 
+def mailgun_send(email):
+    key = os.environ["MAILGUN_KEY"]
+    r = requests.post(
+                 "https://api.mailgun.net/v2/sandboxaafd9ee615e54f49af424db82ccf028a.mailgun.org/messages",
+                 auth=("api", key),
+                 data={"from": "Alex Mathew <alexmathew003@gmail.com>",
+                       "to": email,
+                       "subject": "Welcome to CSIPy!",
+                       "text": os.environ["WELCOME_MAIL"]})
+    return
+
+
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -74,4 +86,7 @@ def complete(*args):
         return render_template('failure.html', error_msg="You're already registered.")
     else:
         cur.execute('UPDATE PARTICIPANTS SET REGISTERED=true WHERE REG=%s', (regno,))
+        cur.execute('SELECT EMAIL FROM PARTICIPANTS WHERE REG=%s', (regno,))
+        email = cur.fetchall()[0]
+        mailgun_send(email)
         return render_template('success.html')
