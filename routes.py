@@ -34,7 +34,7 @@ def home():
 @connectDB
 def participants(*args):
     cur = args[0]
-    cur.execute('SELECT NAME FROM PARTICIPANTS')
+    cur.execute('SELECT REG, NAME FROM PARTICIPANTS WHERE REGISTERED IS true')
     parts = cur.fetchall()
     return render_template('participants.html', participants = parts)
 
