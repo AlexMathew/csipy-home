@@ -99,6 +99,7 @@ def complete(*args):
     except Exception:
         session['msgclass'] = "alert alert-danger"
         session['text'] = "Please enter a valid register number."        
+        return redirect(url_for('register'))
     cur.execute('SELECT REG FROM PARTICIPANTS')
     complete = cur.fetchall()
     cur.execute('SELECT REG FROM PARTICIPANTS WHERE REGISTERED IS true')
@@ -111,10 +112,10 @@ def complete(*args):
                            posted if we plan an open Python workshop. Thanks for your interest !"
     elif (regno,) in registered:
         session['msgclass'] = "alert alert-danger"
-        session['text'] = "You're already registered."
+        session['text'] = "You've already registered."
     else:
         session['msgclass'] = "alert alert-success"
-        session['text'] = "Welcome onboard ! You have registered for the workshop. \
+        session['text'] = "<strong>Welcome onboard !</strong> You have registered for the workshop. \
                            We'll keep you posted on what to do before the workshop."
         cur.execute('UPDATE PARTICIPANTS SET REGISTERED=true WHERE REG=%s', (regno,))
         cur.execute('SELECT NAME, EMAIL FROM PARTICIPANTS WHERE REG=%s', (regno,))
