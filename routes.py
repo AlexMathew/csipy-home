@@ -98,7 +98,7 @@ def complete(*args):
         regno = int(request.form['regno'])
     except Exception:
         session['msgclass'] = "alert alert-danger"
-        session['text'] = "Please enter a valid register number."        
+        session['text'] = "Please enter a valid register number."
         return redirect(url_for('register'))
     cur.execute('SELECT REG FROM PARTICIPANTS')
     complete = cur.fetchall()
