@@ -1,8 +1,12 @@
 {% extends "template.html" %}
 {% block content %}
+	{% if msgclass %}
+		<div class="{{ msgclass }}" role="alert">{{ text }}</div>
+	{% endif %}
 	<div class="col-lg-6">
 	    <div class="input-group">
 	      	<form action="{{ url_for('complete') }}" method=post>
+	      		<span class="input-group-addon">Registration number</span>
 		    	<input type="text" class="form-control" name="regno">
 		    	<div style="height: 2em"></div>
 		      	<span class="input-group-btn">
