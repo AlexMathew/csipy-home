@@ -45,20 +45,26 @@ def accessSession(wrapped):
 def mailgun_operations(name, email):
     key = os.environ["MAILGUN_KEY"]
     r = requests.post(
-                     "https://api.mailgun.net/v2/sandboxaafd9ee615e54f49af424db82ccf028a.mailgun.org/messages",
-                     auth=("api", key),
-                     data={"from": "Alex Mathew <alexmathew003@gmail.com>",
-                           "to": email,
-                           "subject": "Welcome to CSIPy!",
-                           "text": os.environ["WELCOME_MAIL"]})
+            "https://api.mailgun.net/v2/sandboxaafd9ee615e54f49af424db82ccf028a.mailgun.org/messages",
+            auth=("api", key),
+            data={
+                "from": "Alex Mathew <alexmathew003@gmail.com>",
+                "to": email,
+                "subject": "Welcome to CSIPy!",
+                "text": os.environ["WELCOME_MAIL"]
+            }
+        )
     r = requests.post(
-                     "https://api.mailgun.net/v2/lists/csipy@sandboxaafd9ee615e54f49af424db82ccf028a.mailgun.org/members",
-                     auth=('api', key),
-                     data={'subscribed': True,
-                           'address': email,
-                           'name': name,
-                           'description': '',
-                           'vars': '{"name": "' + name + '"}'})
+            "https://api.mailgun.net/v2/lists/csipy@sandboxaafd9ee615e54f49af424db82ccf028a.mailgun.org/members",
+            auth=('api', key),
+            data={
+                'subscribed': True,
+                'address': email,
+                'name': name,
+                'description': '',
+                'vars': '{"name": "' + name + '"}'
+            }
+        )
     return
 
 
@@ -104,6 +110,8 @@ def complete(*args):
     complete = cur.fetchall()
     cur.execute('SELECT REG FROM PARTICIPANTS WHERE REGISTERED IS true')
     registered = cur.fetchall()
+    cur.execute('SELECT COUNT(*) FROM PARTICIPANTS WHERE REGISTERED IS true')
+    reg_count = int(cur.fetchone()[0])
     if (regno,) not in complete:
         session['msgclass'] = "alert alert-danger"
         session['text'] = "We're sorry, but the workshop is currently \
@@ -113,6 +121,18 @@ def complete(*args):
     elif (regno,) in registered:
         session['msgclass'] = "alert alert-danger"
         session['text'] = "You've already registered."
+    elif reg_count > 1:
+        session['msgclass'] = "alert alert-danger"
+        session["text"] = "We're sorry, but we've reached the limit on people we can take in for \
+                           the workshop. If you're really interested in getting into Python, \
+                           you can get the links and resources from your friends who are attending \
+                           the workshop. Maybe, you can try contacting one of the organizers directly \
+                           and they can help you out by sharing the stuff. Also, we'll keep you on \
+                           note, so we can bump you up to the front of the line if we have another \
+                           workshop. Thanks for your interest !"
+        cur.execute('SELECT NAME, EMAIL FROM PARTICIPANTS WHERE REG=%s', (regno,))
+        name, email = cur.fetchone()
+        cur.execute('INSERT INTO MISSED (REG, NAME, EMAIL) VALUES (%s, %s, %s)', (regno, name, email))
     else:
         session['msgclass'] = "alert alert-success"
         session['text'] = "<strong>Welcome onboard !</strong> You have registered for the workshop. \
