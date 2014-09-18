@@ -121,7 +121,7 @@ def complete(*args):
     elif (regno,) in registered:
         session['msgclass'] = "alert alert-danger"
         session['text'] = "You've already registered."
-    elif reg_count > 1:
+    elif reg_count >= 150:
         session['msgclass'] = "alert alert-danger"
         session["text"] = "We're sorry, but we've reached the limit on people we can take in for \
                            the workshop. If you're really interested in getting into Python, \
@@ -135,7 +135,7 @@ def complete(*args):
         cur.execute('INSERT INTO MISSED (REG, NAME, EMAIL) VALUES (%s, %s, %s)', (regno, name, email))
     else:
         session['msgclass'] = "alert alert-success"
-        session['text'] = "<strong>Welcome onboard !</strong> You have registered for the workshop. \
+        session['text'] = "Welcome onboard ! You have registered for the workshop. \
                            We'll keep you posted on what to do before the workshop."
         cur.execute('UPDATE PARTICIPANTS SET REGISTERED=true WHERE REG=%s', (regno,))
         cur.execute('SELECT NAME, EMAIL FROM PARTICIPANTS WHERE REG=%s', (regno,))
