@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, request, session, escape, url_for
 import psycopg2
 from functools import wraps
+import datetime
 import os
 import urlparse
 import requests
@@ -138,6 +139,8 @@ def complete(*args):
         session['text'] = "Welcome onboard ! You have registered for the workshop. \
                            We'll keep you posted on what to do before the workshop."
         cur.execute('UPDATE PARTICIPANTS SET REGISTERED=true WHERE REG=%s', (regno,))
+        cur.execute('UPDATE PARTICIPANTS SET REGDATE=%s WHERE REG=%s', 
+                    (datetime.datetime.utcnow(), regno))
         cur.execute('SELECT NAME, EMAIL FROM PARTICIPANTS WHERE REG=%s', (regno,))
         name, email = cur.fetchone()
         mailgun_operations(name, email)
