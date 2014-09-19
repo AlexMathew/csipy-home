@@ -121,7 +121,7 @@ def complete(*args):
     elif (regno,) in registered:
         session['msgclass'] = "alert alert-danger"
         session['text'] = "You've already registered."
-    elif reg_count >= 150:
+    elif reg_count >= 120:
         session['msgclass'] = "alert alert-danger"
         session["text"] = "We're sorry, but we've reached the limit on people we can take in for \
                            the workshop. If you're really interested in getting into Python, \
