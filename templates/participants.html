@@ -3,9 +3,21 @@
 	<div class="page-header">
 	  <h1>Participants <small>Who can you expect there ?</small></h1>
 	</div>
-	<ul class="list-group">
-	{% for part in participants %}
-		<li class="list-group-item">{{part[0]}} : {{part[1]}}</li>
-	{% endfor %}
-	</ul>
+	<div class="panel panel-default">
+		<div class="panel-heading"></div>
+		<table class="table">
+			<tr>
+				<th>Participant no.</th>
+				<th>Register number</th>
+				<th>Name</th>
+			</tr>
+			{% for i, part in enumerate(participants) %}
+				<tr>
+					<td>{{ i }}</td>
+					<td>{{ part[0] }}</td>
+					<td>{{ part[1] }}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
 {% endblock %}
