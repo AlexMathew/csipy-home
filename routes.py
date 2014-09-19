@@ -81,7 +81,7 @@ def participants(*args):
     cur = args[0]
     cur.execute('SELECT REG, NAME FROM PARTICIPANTS WHERE REGISTERED IS true ORDER BY REG')
     parts = cur.fetchall()
-    return render_template('participants.html', participants=parts)
+    return render_template('participants.html', participants=zip(range(1, len(parts)+1), parts))
 
 
 @app.route('/setup')
